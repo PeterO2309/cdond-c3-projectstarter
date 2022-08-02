@@ -79,11 +79,11 @@ jobs:
       - run:
           name: Build front-end
           command: |
-            cd backend
+            cd frontend
             npm install 
-            npm run build
+            npm run test
       - save_cache:
-          paths: [backend/node_modules]
+          paths: [frontend/node_modules]
           key: frontend-test
                 
   test-backend:
