@@ -4,6 +4,19 @@
     path: ~/backend
     state: directory
 
+- name: "install nodejs and npm"
+  become: true
+  apt: 
+    name: ["nodejs", "npm"]
+    state: latest
+    update_cache: yes
+- name: "install pm2"
+  become: true
+  apt: 
+    name: pm2
+    global: yes
+    production: yes
+    state: present
 - name: "Unarchive backend files"
   unarchive:
     src: ~/project/.circleci/ansible/files/artifact.tar.gz
@@ -12,8 +25,6 @@
 - name: "Installing Node Dependencies"
   shell: |
     cd ~/backend
-    npm install
-    npm run build 
     pm2 stop default
     pm2 start npm -- start
 
