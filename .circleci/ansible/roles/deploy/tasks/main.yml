@@ -1,13 +1,13 @@
 ---
 - name: "Create a Backend app directory"
   file:
-    path: ~/ubuntu/backend
+    path: ~/backend
     state: directory
 
 - name: "Unarchive backend files"
   unarchive:
     src: ~/project/.circleci/ansible/files/artifact.tar.gz
-    dest: ~/ubuntu/backend
+    dest: ~/backend
 
 - name: "Installing Node Dependencies"
   shell: |
