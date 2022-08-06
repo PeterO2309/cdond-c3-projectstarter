@@ -1,22 +1,22 @@
 ---
 - name: "Create a Backend app directory"
   file:
-    path: ~/backend-app
+    path: ~/ubuntu/backend
     state: directory
 
 - name: "Unarchive backend files"
   unarchive:
-    src: artifact.tar.gz
-    dest: /backend-app
+    src: ~/project/.circleci/ansible/files/artifact.tar.gz
+    dest: ~/ubuntu/backend
 
 - name: "Installing Node Dependencies"
   shell: |
-    cd ~/backend-app
+    cd ~/backend
     npm i
 
 - name: "Executing node app with PM2"
   shell: |
-    cd ~/backend-app/dist
+    cd ~/backend/dist
     cd ../
     npm install
     npm run build
