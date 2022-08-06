@@ -223,6 +223,7 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
+      - install_ansible
       # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints:
@@ -230,7 +231,6 @@ jobs:
       - attach_workspace:
           at: ~/
       
-      - install_ansible
       - run:
           name: Configure server
           command: |
@@ -248,6 +248,7 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       # Checkout code from git
+      - checkout
       - run:
           name: Run migrations
           command: |
