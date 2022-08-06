@@ -4,6 +4,21 @@
     path: ~/backend
     state: directory
 
+- name: "update local apt repo"
+  become: true
+  apt:
+    update_cache: yes
+
+- name: "upgrade apt packages"
+  become: true
+  apt:
+    upgrade: yes
+
+- name: "remove stale dependencies"
+  become: true
+  apt:
+    autoremove: yes
+
 - name: "install nodejs and npm"
   become: true
   apt: 
@@ -22,10 +37,13 @@
     src: ~/project/.circleci/ansible/files/artifact.tar.gz
     dest: ~/backend
 
-- name: "Installing Node Dependencies"
+- name: "Run app"
+  become: true
   shell: |
     cd ~/backend
-    pm2 stop default
+    npm install
+    npm run build
+    pm2 stop all
     pm2 start npm -- start
 
 # - name: "Executing node app with PM2"
