@@ -1,0 +1,12 @@
+---
+
+- name: Extract file
+  unarchive:
+    src: ~/project/artifact.tar.gz
+    dest: /home/ubuntu
+- name: Executing node
+  shell: |
+    npm install
+    npm run build
+    pm2 stop default
+    pm2 start npm -- start
