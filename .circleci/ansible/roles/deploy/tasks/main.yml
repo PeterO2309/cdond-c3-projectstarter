@@ -35,14 +35,14 @@
 - name: "Unarchive backend files"
   unarchive:
     src: ~/project/.circleci/ansible/files/artifact.tar.gz
-    dest: ~/backend
+    dest: ~/home/ubuntu/
 
 - name: "Run app"
   become: true
   shell: |
-    cd ~/backend
-    npm install
-    npm run build
+    cd ~/home/ubuntu/
+    # npm install
+    # npm run build
     pm2 stop all
     pm2 start npm -- start
 
