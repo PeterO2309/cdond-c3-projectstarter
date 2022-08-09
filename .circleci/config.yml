@@ -459,10 +459,10 @@ jobs:
             name: Get old stack workflow id
             command: |
               # Fetch the Old Workflow ID
-              export OldWorkflowID=$(aws cloudformation \
-                list-exports --query "Exports[?Name==\'WorkflowID\'].Value" \
+              export OLD_WORKFLOW_ID=$(aws cloudformation \
+                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
                 --no-paginate --output text)
-              echo OldWorkflowID: "${OldWorkflowID}"
+              echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
               echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
       
               export STACKS=$(aws cloudformation list-stacks \
@@ -471,12 +471,12 @@ jobs:
               
               echo STACKS: "${STACKS}"
 
-              if [ "${OldWorkflowID}"  != "{CIRCLE_WORKFLOW_ID:0:7}"]
+              if [ "${OLD_WORKFLOW_ID}"  != "${CIRCLE_WORKFLOW_ID:0:7}"]
               then
                   echo ***Delete Confirmed***
-                  aws s3 rm "s3://${OldWorkflowID}" --recursive  
-                  aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-                  aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+                  aws s3 rm "s3://${OLD_WORKFLOW_ID}" --recursive  
+                  aws cloudformation delete-stack --stack-name "udapeople-backend-${OLD_WORKFLOW_ID}"
+                  aws cloudformation delete-stack --stack-name "udapeople-frontend-${OLD_WORKFLOW_ID"
               else
                   echo ***Cannot Cleanup***
               fi
