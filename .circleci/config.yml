@@ -457,6 +457,8 @@ jobs:
             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
             --stack-name InitialStack
             echo OLD_WORKFLOW_ID: cat ~/project/OLD_WORKFLOW_ID.txt
+            echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
+
       - destroy-environment
       - revert-migrations 
   #     # Here's where you will add some code to rollback on failure  
@@ -471,14 +473,13 @@ jobs:
           name: Get old stack workflow id
           command: |
             # Fetch the Old Workflow ID
-            export OLD_WORKFLOW_ID=$(aws cloudformation \
-            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-            --no-paginate --output text)
+            # export OLD_WORKFLOW_ID=$(aws cloudformation \
+            # list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            # --no-paginate --output text)
+            export OLD_WORKFLOW_ID=$(cat ~/project/OLD_WORKFLOW_ID.txt)
             echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-            echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
+            # echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
             cat ~/project/OLD_WORKFLOW_ID.txt
-
-            echo Old Wokflow ID: ${OLD_WORKFLOW_ID}
 
             # Fetch the stack names
             export STACKS=$(aws cloudformation list-stacks \
@@ -490,7 +491,7 @@ jobs:
       - run:
           name: Deleting the old stacks/s3 bucket
           command: |
-            export OLD_WORKFLOW_ID = $(cat ~/project/OLD_WORKFLOW_ID.txt)
+            export OLD_WORKFLOW_ID=$(cat ~/project/OLD_WORKFLOW_ID.txt)
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OLD_WORKFLOW_ID}" ]]
             then
                 echo ***Delete Confirmed***
