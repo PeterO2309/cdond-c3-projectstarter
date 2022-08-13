@@ -429,11 +429,33 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
+      - attach_workspace:
+          at: ~/
       - install_aws_cli
       - install_nodejs
+      # - run:
+      #     name: Save old Workflow ID to workspace/kvdb.io
+      #     command: |
+      #       # Fetch the Old Workflow ID
+      #       # export OLD_WORKFLOW_ID=$(aws cloudformation \
+      #       # list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+      #       # --no-paginate --output text)
+      #       echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+      #       echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
+      #       # curl https://kvdb.io/2YSmGqbyRmLKcE4anCurMo/old_workflow_id -d "${OLD_WORKFLOW_ID}"
+      #       echo "Viewing from ~/project/ dir"
+      #       cat ~/project/OLD_WORKFLOW_ID.txt
+         
+      # - persist_to_workspace:
+      #     root: ~/
+      #     paths:
+      #       - project/OLD_WORKFLOW_ID.txt
+      
       - run:
-          name: Save old Workflow ID to workspace/kvdb.io
+          name: Update Cloudfront distribution
+          
           command: |
+
             # Fetch the Old Workflow ID
             export OLD_WORKFLOW_ID=$(aws cloudformation \
             list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
@@ -441,22 +463,13 @@ jobs:
             echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
             echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
             # curl https://kvdb.io/2YSmGqbyRmLKcE4anCurMo/old_workflow_id -d "${OLD_WORKFLOW_ID}"
-            echo "Viewing from ~/project/ dir"
-            cat ~/project/OLD_WORKFLOW_ID.txt
-         
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/OLD_WORKFLOW_ID.txt
-      
-      - run:
-          name: Update Cloudfront distribution
-          command: |
+
             aws cloudformation deploy \
             --template-file .circleci/files/cloudfront.yml \
             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
             --stack-name InitialStack
-            echo OLD_WORKFLOW_ID: cat ~/project/OLD_WORKFLOW_ID.txt
+            echo 
+            # echo OLD_WORKFLOW_ID: cat ~/project/OLD_WORKFLOW_ID.txt
             echo CIRCLE_WORKFLOW_ID: "${CIRCLE_WORKFLOW_ID:0:7}"
 
       - destroy-environment
@@ -476,10 +489,17 @@ jobs:
             # export OLD_WORKFLOW_ID=$(aws cloudformation \
             # list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
             # --no-paginate --output text)
-            export OLD_WORKFLOW_ID=$(cat ~/project/OLD_WORKFLOW_ID.txt)
+            # export OLD_WORKFLOW_ID=$(cat ~/project/OLD_WORKFLOW_ID.txt)
+            # echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+            # # echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
+            # cat ~/project/OLD_WORKFLOW_ID.txt
+
+            # Fetch the Old Workflow ID
+            export OLD_WORKFLOW_ID=$(aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text)
+            pwd
             echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
-            # echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
-            cat ~/project/OLD_WORKFLOW_ID.txt
 
             # Fetch the stack names
             export STACKS=$(aws cloudformation list-stacks \
@@ -491,7 +511,11 @@ jobs:
       - run:
           name: Deleting the old stacks/s3 bucket
           command: |
-            export OLD_WORKFLOW_ID=$(cat ~/project/OLD_WORKFLOW_ID.txt)
+            # export OLD_WORKFLOW_ID=$(cat ~/project/OLD_WORKFLOW_ID.txt)
+            export OLD_WORKFLOW_ID=$(aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text)
+
             if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OLD_WORKFLOW_ID}" ]]
             then
                 echo ***Delete Confirmed***
@@ -504,33 +528,33 @@ jobs:
             
 workflows:
   default:
-    jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [master]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-      - run-migrations:
-          requires: [configure-infrastructure]
-      - deploy-frontend:
-          requires: [run-migrations]
-      - deploy-backend:
-          requires: [run-migrations]
-      - smoke-test:
-          requires: [deploy-backend, deploy-frontend]
-      - cloudfront-update:
-          requires: [smoke-test]
+    # jobs:
+    #   - build-frontend
+    #   - build-backend
+    #   - test-frontend:
+    #       requires: [build-frontend]
+    #   - test-backend:
+    #       requires: [build-backend]
+    #   - scan-backend:
+    #       requires: [build-backend]
+    #   - scan-frontend:
+    #       requires: [build-frontend]
+    #   - deploy-infrastructure:
+    #       requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+    #       filters:
+    #         branches:
+    #           only: [master]
+    #   - configure-infrastructure:
+    #       requires: [deploy-infrastructure]
+    #   - run-migrations:
+    #       requires: [configure-infrastructure]
+    #   - deploy-frontend:
+    #       requires: [run-migrations]
+    #   - deploy-backend:
+    #       requires: [run-migrations]
+    #   - smoke-test:
+    #       requires: [deploy-backend, deploy-frontend]
+      - cloudfront-update
+          # requires: [smoke-test]
       - cleanup:
           requires: [cloudfront-update]
