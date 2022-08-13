@@ -440,9 +440,9 @@ jobs:
             --no-paginate --output text)
             echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
             echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
+            # curl https://kvdb.io/2YSmGqbyRmLKcE4anCurMo/old_workflow_id -d "${OLD_WORKFLOW_ID}"
             echo "Viewing from ~/project/ dir"
             cat ~/project/OLD_WORKFLOW_ID.txt
-            #curl https://kvdb.io/2YSmGqbyRmLKcE4anCurMo/old_workflow_id -d "${OLD_WORKFLOW_ID}"
          
       - persist_to_workspace:
           root: ~/
@@ -471,8 +471,13 @@ jobs:
           name: Get old stack workflow id
           command: |
             # Fetch the Old Workflow ID
+            export OLD_WORKFLOW_ID=$(aws cloudformation \
+            list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+            --no-paginate --output text)
+            echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
+            echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
             cat ~/project/OLD_WORKFLOW_ID.txt
-            export OLD_WORKFLOW_ID=$(cat ~/project/OLD_WORKFLOW_ID.txt)
+
             echo Old Wokflow ID: ${OLD_WORKFLOW_ID}
 
             # Fetch the stack names
