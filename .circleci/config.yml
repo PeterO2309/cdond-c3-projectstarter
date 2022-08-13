@@ -471,7 +471,7 @@ jobs:
           name: Get old stack workflow id
           command: |
             # Fetch the Old Workflow ID
-            cat ~/project/OLD_WORKFLOW_ID.txt
+            cat /home/project/OLD_WORKFLOW_ID.txt
             export OLD_WORKFLOW_ID=$(cat /home/project/OLD_WORKFLOW_ID.txt)
             echo Old Wokflow ID: ${OLD_WORKFLOW_ID}
 
