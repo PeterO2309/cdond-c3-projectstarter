@@ -456,7 +456,7 @@ jobs:
             --template-file .circleci/files/cloudfront.yml \
             --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
             --stack-name InitialStack
-            echo OLD_WORKFLOW_IDcat = ~/project/OLD_WORKFLOW_ID.txt
+            echo OLD_WORKFLOW_ID: cat ~/project/OLD_WORKFLOW_ID.txt
       - destroy-environment
       - revert-migrations 
   #     # Here's where you will add some code to rollback on failure  
@@ -471,7 +471,7 @@ jobs:
           name: Get old stack workflow id
           command: |
             # Fetch the Old Workflow ID
-            export OLD_WORKFLOW_ID = $(cat ~/project/OLD_WORKFLOW_ID.txt)
+            export OLD_WORKFLOW_ID: $(cat ~/project/OLD_WORKFLOW_ID.txt)
             echo Old Wokflow ID: ${OLD_WORKFLOW_ID}
 
             # Fetch the stack names
