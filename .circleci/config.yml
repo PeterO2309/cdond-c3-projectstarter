@@ -493,7 +493,7 @@ jobs:
             # export OLD_WORKFLOW_ID=$(cat ~/project/OLD_WORKFLOW_ID.txt)
             # echo "Old Wokflow ID: $OLD_WORKFLOW_ID"
             # # echo $OLD_WORKFLOW_ID >> ~/project/OLD_WORKFLOW_ID.txt
-            # cat ~/project/OLD_WORKFLOW_ID.txt
+            # #cat ~/project/OLD_WORKFLOW_ID.txt
 
             # Fetch the Old Workflow ID
             export OLD_WORKFLOW_ID=$(aws cloudformation \
